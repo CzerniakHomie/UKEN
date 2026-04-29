@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'task_repository.dart';
 
 void main() {
   runApp(const MyApp());
@@ -20,19 +21,19 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class HomeScreen extends StatelessWidget {
+//zmiana z stateless na stateful
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final List<Task> tasks = [
-      Task(title: "Zrobić zakupy spożywcze", deadline: "dzisiaj", done: true, priority: "wysoki"),
-      Task(title: "Napisać sprawozdsanie z Lab 4", deadline: "jutro", done: false, priority: "wysoki"),
-      Task(title: "Umyć samochod", deadline: "sobota", done: false, priority: "niski"),
-      Task(title: "Przygotować się do kolokwium", deadline: "wtorek", done: false, priority: "średni"),
-    ];
+  State<HomeScreen> createState() => _HomeScreenState();
+}
 
-    final int doneCount = tasks.where((t) => t.done).length;
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  Widget build(BuildContext context) {
+
+    final int doneCount = TaskRepository.tasks.where((t) => t.done).length;
 
     return Scaffold(
       appBar: AppBar(
@@ -45,7 +46,7 @@ class HomeScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Masz dziś ${tasks.length} zadania. Wykonano: $doneCount",
+              "Masz dziś ${TaskRepository.tasks.length} zadania. Wykonano: $doneCount",
               style: const TextStyle(fontSize: 16, color: Colors.grey),
             ),
             const SizedBox(height: 10),
@@ -60,12 +61,72 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 20),
             Expanded(
               child: ListView.builder(
-                itemCount: tasks.length,
+                itemCount: TaskRepository.tasks.length,
                 itemBuilder: (context, index) {
-                  final task = tasks[index];
+                  final task = TaskRepository.tasks[index];
                   return TaskCard(task: task);
                 },
               ),
+            ),
+          ],
+        ),
+      ),
+
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.blue,
+        child: const Icon(Icons.add, color: Colors.white),
+        onPressed: () async {
+          final Task? newTask = await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AddTaskScreen()),
+          );
+
+          if (newTask != null) {
+            setState(() {
+              TaskRepository.tasks.add(newTask);
+            });
+          }
+        },
+      ),
+    );
+  }
+}
+
+class AddTaskScreen extends StatelessWidget {
+  AddTaskScreen({super.key});
+
+  final titleController = TextEditingController();
+  final deadlineController = TextEditingController();
+  final priorityController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.blue,
+        title: const Text("Nowe zadanie", style: TextStyle(color: Colors.white)),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            TextField(controller: titleController, decoration: const InputDecoration(labelText: "Tytuł zadania")),
+            TextField(controller: deadlineController, decoration: const InputDecoration(labelText: "Termin")),
+            TextField(controller: priorityController, decoration: const InputDecoration(labelText: "Priorytet")),
+            const SizedBox(height: 30),
+            ElevatedButton(
+              onPressed: () {
+                if (titleController.text.isNotEmpty) {
+                  final newTask = Task(
+                    title: titleController.text,
+                    deadline: deadlineController.text,
+                    priority: priorityController.text,
+                    done: false,
+                  );
+                  Navigator.pop(context, newTask);
+                }
+              },
+              child: const Text("Zapisz zadanie"),
             ),
           ],
         ),
@@ -74,23 +135,8 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-class Task {
-  final String title;
-  final String deadline;
-  final bool done;
-  final String priority;
-
-  Task({
-    required this.title,
-    required this.deadline,
-    required this.done,
-    required this.priority,
-  });
-}
-
 class TaskCard extends StatelessWidget {
   final Task task;
-
   const TaskCard({super.key, required this.task});
 
   @override
