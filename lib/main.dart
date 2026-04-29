@@ -19,9 +19,9 @@ class MyApp extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("KrakFlow"),           //
-              Text("Organizacja studiów"), //
-              Text("Dzisiejsze zadania"),  //
+              Text("KrakFlow"),
+              Text("Organizacja studiów"),
+              Text("Dzisiejsze zadania"),
             ],
           ),
         ),
