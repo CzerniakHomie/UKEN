@@ -12,7 +12,7 @@ class Task {
   });
 }
 
-//lista zadan
+//lista zadań
 class TaskRepository {
   static List<Task> tasks = [
     Task(title: "Zrobić zakupy spożywcze", deadline: "dzisiaj", done: true, priority: "wysoki"),
