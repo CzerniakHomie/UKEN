@@ -39,7 +39,10 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
+  cupertino_icons: ^1.0.8
+  hive_ce: ^2.1.2
+  hive_ce_flutter: ^2.1.1
+  http: ^1.2.2
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your

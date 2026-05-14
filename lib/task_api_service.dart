@@ -14,6 +14,7 @@ class TaskApiService {
 
       return todos.map((todo) {
         return Task(
+          id: todo["id"], // id z api
           title: todo["todo"],
           deadline: "brak",
           done: todo["completed"],
@@ -21,7 +22,7 @@ class TaskApiService {
         );
       }).toList();
     } else {
-      throw Exception("Bląd pobierania danych");
+      throw Exception("Błąd pobierania danych");
     }
   }
 }
